@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-
 class BaseLSTM(nn.Module):
     def __init__(self, num_layers, num_classes, input_size, hidden_size, dropout, bidirectional=False):
         super().__init__()
