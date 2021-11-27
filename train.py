@@ -46,6 +46,35 @@ def train_baseline(train_loader, model, optimizer, criterion, device, epoch, tra
 
     return training_loss, train_acc
 
+
+def validate_baseline(val_loader, model, scheduler, device, epoch, val_dset):
+    # Validate
+    model.eval()
+    num_correct = 0
+    
+    start_time = time.time()
+    
+    # Validation
+    for batch_num, (x, xlen, y) in enumerate(val_loader, 0):
+        x, y = x.to(device), y.to(device)
+#         outputs, _ = network(x)  # returns output, embeddings
+        logits = model(x)  # returns output, embeddings_out_norelu, embeddings_out_relu
+        num_correct += (torch.argmax(logits, axis=1) == y).sum().item()
+    
+    val_acc = num_correct / len(val_dset)
+        
+    print('Epoch: {}, Validation Accuracy: {:.2f}'.format(epoch, val_acc))
+    
+    stop_time = time.time()
+    print(f"Validation Time {stop_time - start_time} seconds")
+    
+    # scheduler
+    # scheduler.step(val_acc)  # don't use with StepLR
+    scheduler.step()
+
+    return val_acc
+    
+
 # specific train/test functions for ICASSP models
 def train_language_model(train_loader_LM, model, opt, criterion, device):
 
