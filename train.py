@@ -1,6 +1,51 @@
 from config import *
 
 
+# specific train/test functions for baseline model
+def train_baseline(train_loader, model, optimizer, criterion, device, epoch, train_dset):
+    # Train
+    model.train()
+    avg_loss = 0.0
+    
+    start_time = time.time()
+    train_num_correct = 0
+    
+    for batch_num, (xbatch, xlen, ybatch) in enumerate(train_loader, 0):
+        assert(xbatch.shape[2] == 640)
+        optimizer.zero_grad()
+        
+        xbatch, ybatch = xbatch.to(device), ybatch.to(device)
+
+#         outputs, _ = network(x)  # returns output, embeddings_out
+        logits = model(xbatch)  # returns output, embeddings_out_norelu, embeddings_out_relu
+#         print("outputs:", outputs.shape)
+#         print("argmax of output:", torch.argmax(outputs, axis=1).shape)
+#         print("y long:", y.long().shape)
+        train_num_correct += (torch.argmax(logits, axis=1) == ybatch).sum().item()
+
+        loss = criterion(logits, ybatch.long())
+        loss.backward()
+        optimizer.step()
+
+        avg_loss += loss.item()
+        training_loss = avg_loss
+
+        # if batch_num % 5 == 0:
+        #     print("5 batches have passed")
+
+        if batch_num % 10 == 9:
+            print('Epoch: {}\tBatch: {}\tAvg-Loss: {:.4f}'.format(epoch, batch_num + 1, avg_loss / 10))
+            training_loss = avg_loss / 10
+            avg_loss = 0.0
+            
+    stop_time = time.time()
+    print(f"Training Time {stop_time - start_time} seconds")
+    
+    train_acc = train_num_correct / len(train_dset)
+    print(f"Training Acc: {train_acc}")
+
+    return training_loss, train_acc
+
 # specific train/test functions for ICASSP models
 def train_language_model(train_loader_LM, model, opt, criterion, device):
 
