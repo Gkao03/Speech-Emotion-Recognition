@@ -43,3 +43,11 @@ class MyDataset(Dataset):
         input_lengths = input_lengths.detach()
         
         return output_tensor, input_lengths, targets
+
+
+def get_loader(paths, labels, batch_size=32, num_workers=2, train=True):
+    dset = MyDataset(paths, labels)
+    args = dict(shuffle=True if train else False, batch_size=batch_size, num_workers=num_workers, collate_fn=dset.pad_collate, drop_last=True)  # change to num_workers=4 on diff platform
+    loader = DataLoader(dset, **args)
+
+    return loader
