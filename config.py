@@ -27,8 +27,3 @@ from tqdm import tqdm
 from allosaurus.audio import read_audio
 from allosaurus.app import read_recognizer
 from allosaurus.am.utils import *
-
-
-def get_device():
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    return device
