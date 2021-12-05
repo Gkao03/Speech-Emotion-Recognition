@@ -62,3 +62,5 @@ def get_train_val_test_IEMOCAP(IEMOCAP_root, all_full_files, file_to_label):
     assert(len(train_list_labels) == len(train_list_paths))
     assert(len(val_list_labels) == len(val_list_paths))
     assert(len(test_list_labels) == len(test_list_paths))
+
+    return train_list_labels, val_list_labels, test_list_labels
